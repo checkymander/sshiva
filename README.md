@@ -1,6 +1,7 @@
 # sshiva
-A quickly written C# application that allows you to run SSH commands against a host or list of hosts.
+A quickly written C# application that allows you to run SSH commands against a host or list of hosts. 
 
+Targeted for .NET 4.0 hosts, should work fine on Win10+, but ensure the proper .NET version exists on any earlier versions.
 
 # Usage
 ```
