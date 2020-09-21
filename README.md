@@ -7,12 +7,12 @@ Targeted for .NET 4.0 hosts, should work fine on Win10+, but ensure the proper .
 ```
 Execute a command using a password:
 
-sshiva.exe /hosts=192.168.2.5,192.168.2.12,192.168.2.13 /user=checkymander /password="P@ssw0rd" /command="whoami"
+sshiva.exe /hosts:192.168.2.5,192.168.2.12,192.168.2.13 /user:checkymander /password:"P@ssw0rd" /command:"whoami"
 
-sshiva.exe /hosts=192.168.2.5,192.168.2.12,192.168.2.13 /user=checkymander /b64="UEBzc3cwcmQ=" /command="whoami"
+sshiva.exe /hosts:192.168.2.5,192.168.2.12,192.168.2.13 /user:checkymander /b64:"UEBzc3cwcmQ=" /command:"whoami"
 
 
 Execute a command using a key:
 
-sshiva.exe /hosts=192.168.2.5,192.168.2.12,192.168.2.13 /user=checkymander /key="C:\users\checkymander\.ssh\checkymanderkey" /command="whoami"
+sshiva.exe /hosts:192.168.2.5,192.168.2.12,192.168.2.13 /user:checkymander /key:"C:\users\checkymander\.ssh\checkymanderkey" /command:"whoami"
 ```
