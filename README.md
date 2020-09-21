@@ -9,6 +9,8 @@ Execute a command using a password:
 
 sshiva.exe /hosts=192.168.2.5,192.168.2.12,192.168.2.13 /user=checkymander /password="P@ssw0rd" /command="whoami"
 
+sshiva.exe /hosts=192.168.2.5,192.168.2.12,192.168.2.13 /user=checkymander /b64="UEBzc3cwcmQ=" /command="whoami"
+
 
 Execute a command using a key:
 
