@@ -18,23 +18,26 @@ namespace sshiva
             List<string> hosts = new List<string>();
                 foreach (string arg in args)
             {
-                switch (arg.Split('=')[0])
+                switch (arg.Split(':')[0])
                 {
                     case "/user":
-                        user = arg.Split('=')[1];
+                        user = arg.Split(':')[1];
                         break;
                     case "/key":
-                        key = arg.Split('=')[1];
+                        key = arg.Split(':')[1];
                         keyAuth = true;
                         break;
                     case "/password":
-                        password = arg.Split('=')[1];
+                        password = arg.Split(':')[1];
                         break;
                     case "/hosts":
-                        hosts = arg.Split('=')[1].Split(',').ToList<string>();
+                        hosts = arg.Split(':')[1].Split(',').ToList<string>();
                         break;
                     case "/command":
-                        command = arg.Split('=')[1];
+                        command = arg.Split(':')[1];
+                        break;
+                    case "/b64":
+                        password = Encoding.ASCII.GetString(Convert.FromBase64String(arg.Split(':')[1]));
                         break;
 
                 }
@@ -48,21 +51,29 @@ namespace sshiva
                     {
                         foreach (string host in hosts)
                         {
-                            Console.WriteLine($"Running {command} on {host}");
-                            connectionInfo = new ConnectionInfo(host, user, new PrivateKeyAuthenticationMethod(key));
-                            SshClient sshclient = new SshClient(connectionInfo);
-                            sshclient.Connect();
-                            SshCommand sc = sshclient.CreateCommand(command);
-                            sc.Execute();
-                            if (sc.ExitStatus != 0)
+                            try
                             {
-                                Console.WriteLine("Error in Command: ");
-                                Console.WriteLine("Error: {0}", sc.Error);
-                                Console.WriteLine("Exit Status: {0}", sc.ExitStatus);
+                                Console.WriteLine($"Running {command} on {host} with Key");
+                                connectionInfo = new ConnectionInfo(host, user, new PrivateKeyAuthenticationMethod(key));
+                                SshClient sshclient = new SshClient(connectionInfo);
+                                sshclient.Connect();
+                                SshCommand sc = sshclient.CreateCommand(command);
+                                sc.Execute();
+                                if (sc.ExitStatus != 0)
+                                {
+                                    Console.WriteLine($"Error in Command on Host {host}");
+                                    Console.WriteLine("Error: {0}", sc.Error);
+                                    Console.WriteLine("Exit Status: {0}", sc.ExitStatus);
+                                }
+                                else
+                                {
+
+                                    Console.WriteLine($"{host}: " + sc.Result);
+                                }
                             }
-                            else
+                            catch (Exception e)
                             {
-                                Console.WriteLine(sc.Result);
+                                Console.WriteLine($"Host: {host}\r\n{e.Message}");
                             }
                         }
                     }
@@ -70,29 +81,35 @@ namespace sshiva
                     {
                         foreach (string host in hosts)
                         {
-                            Console.WriteLine($"Running {command} on {host}");
-                            connectionInfo = new ConnectionInfo(host, user, new PasswordAuthenticationMethod(user, password));
-                            SshClient sshclient = new SshClient(connectionInfo);
-                            sshclient.Connect();
-                            SshCommand sc = sshclient.CreateCommand(command);
-                            sc.Execute();
-                            if(sc.ExitStatus != 0)
+                            try
                             {
-                                Console.WriteLine("Error in Command: ");
-                                Console.WriteLine("Error: {0}",sc.Error);
-                                Console.WriteLine("Exit Status: {0}",sc.ExitStatus);
+                                Console.WriteLine($"Running {command} on {host} with password {password}");
+                                connectionInfo = new ConnectionInfo(host, user, new PasswordAuthenticationMethod(user, password));
+                                SshClient sshclient = new SshClient(connectionInfo);
+                                sshclient.Connect();
+                                SshCommand sc = sshclient.CreateCommand(command);
+                                sc.Execute();
+                                if (sc.ExitStatus != 0)
+                                {
+                                    Console.WriteLine($"Error in Command on Host {host}");
+                                    Console.WriteLine("Error: {0}", sc.Error);
+                                    Console.WriteLine("Exit Status: {0}", sc.ExitStatus);
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"{host}: " + sc.Result);
+                                }
                             }
-                            else
+                            catch (Exception e)
                             {
-                                Console.WriteLine(sc.Result);
+                                Console.WriteLine($"Host: {host}\r\n{e.Message}");
                             }
                         }
                     }
                 }
                 else
                 {
-                    Console.WriteLine("usage sshiva.exe /user=root /host=localhost /password=P@ssw0rd /command=\"whoami\"");
-                    Console.ReadKey();
+                    Console.WriteLine("usage sshiva.exe /user:root /host:localhost /password:P@ssw0rd /command:\"whoami\"");
                 }
             }
             catch (Exception e)
